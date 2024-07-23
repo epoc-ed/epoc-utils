@@ -1,1 +1,1 @@
-from ConfigurationClient import ConfigurationClient
+from .ConfigurationClient import ConfigurationClient
