@@ -1,0 +1,29 @@
+package:
+  name: epoc
+  version: "{{ load_setup_py_data().version }}"
+
+build:
+  noarch: python
+  script: python setup.py install
+
+source:
+  path: ..
+
+requirements:
+  build:
+    - python 
+
+  run:
+    - python
+    - rich
+    - redis-py
+
+test:
+  imports:
+    - epoc
+
+about:
+  home: https://github.com/epoc-ed/epoc-utils
+  license: MIT
+  license_family: MIT
+  summary: Configuration of experiments in the EPOC project

@@ -19,31 +19,32 @@ class ConfigurationClient:
             raise ValueError(f'Could not connect to server: {host}:{port}')
 
     @property
-    def PI_name(self):
+    def PI_name(self) -> str:
         res = self.client.get('PI_name')
         if res is None:
             raise ValueError('PI_name not set')
         return res.decode('utf-8')
     
     @PI_name.setter
-    def PI_name(self, value):
+    def PI_name(self, value : str):
         self.client.set('PI_name', value)
 
     @property
-    def project_id(self):
+    def project_id(self) -> str:
         res = self.client.get('project_id')
         if res is None:
             raise ValueError('project_id not set')
         return res.decode('utf-8')
 
     @project_id.setter
-    def project_id(self, value):
+    def project_id(self, value : str):
         self.client.set('project_id', value)
 
     @property
     def last_dataset(self) -> Path | None:
         """
-        Path to the last dataset that was recorded
+        Path to the last dataset that was recorded.
+        Can be used to trigger processing
         """
         res = self.client.get('last_dataset')
         if res is None:
@@ -51,7 +52,9 @@ class ConfigurationClient:
         return Path(res.decode('utf-8'))
     
     @last_dataset.setter
-    def last_dataset(self, value):
+    def last_dataset(self, value : Path | str):
+        if isinstance(value, Path):
+            value = value.as_posix()
         self.client.set('last_dataset', value)
 
     
@@ -76,7 +79,7 @@ class ConfigurationClient:
         self.client.incr('file_id')
 
     @property
-    def base_data_dir(self):
+    def base_data_dir(self) -> Path:
         res = self.client.get('base_data_dir')
         if res is None:
             raise ValueError('base_data_dir not set')
@@ -88,7 +91,7 @@ class ConfigurationClient:
         self.client.set('base_data_dir', value.as_posix())
     
     @property
-    def data_dir(self):
+    def data_dir(self) -> Path:
         """
         Directory where the current experiment will be stored.
         Computed from the configured experiment
@@ -99,7 +102,7 @@ class ConfigurationClient:
     
 
     @property
-    def working_dir(self):
+    def work_dir(self) -> Path:
         """
         Directory where output of data analysis will be stored
         """
@@ -107,7 +110,7 @@ class ConfigurationClient:
         return path
 
     @property
-    def fname(self):
+    def fname(self) -> str:
         """
         Filename for the current dataset
         generated from the configured experiment and the current date
@@ -119,7 +122,7 @@ class ConfigurationClient:
         return s
     
     @property
-    def measurement_tag(self):
+    def measurement_tag(self) -> str:
         """
         Tag for the current measurement
         """
@@ -129,25 +132,25 @@ class ConfigurationClient:
         return res.decode('utf-8')
     
     @measurement_tag.setter
-    def measurement_tag(self, value):
+    def measurement_tag(self, value : str):
         self.client.set('measurement_tag', value)
 
 
     @property
-    def experiment_class(self):
+    def experiment_class(self) -> str:
         res = self.client.get('experiment_class')
         if res is None:
             raise ValueError('experiment_class not set')
         return res.decode('utf-8')
     
     @experiment_class.setter
-    def experiment_class(self, value):
+    def experiment_class(self, value : str):
         if value not in ConfigurationClient._experiment_classes:
             raise ValueError(f'Invalid experiment class. Possible values are: {ConfigurationClient._experiment_classes}. Got: {value}')
         self.client.set('experiment_class', value)
 
     @property
-    def today(self):
+    def today(self) -> str:
         """
         Returns the current date in the format YYYY-MM-DD
         #TODO! should we set this manually instead for experiments crossing over midnight?
@@ -161,6 +164,7 @@ class ConfigurationClient:
         \tproject_id: {self.project_id}
         \texperiment_class: {self.experiment_class}
         \tdata_dir: {self.data_dir}
+        \twork_dir: {self.work_dir}
         \tfname: {self.fname}
 
         \tlast_dataset: {self.last_dataset}
@@ -168,25 +172,3 @@ class ConfigurationClient:
         return inspect.cleandoc(s)
 
 
-if __name__ == '__main__':
-    #Server to connect to and authentication token
-    try:
-        token = os.environ['REDIS_TOKEN']
-    except KeyError:
-        raise ValueError('Please set the REDIS_TOKEN environment variable')    
-        exit(1)
-        
-    host = 'detpi02'
-
-    cfg = ConfigurationClient(host, token=token)
-
-    #Reset all values
-    cfg.client.flushall()
-
-    cfg.PI_name = 'Erik'
-    cfg.project_id = 'epoc'
-    cfg.experiment_class = 'UniVie'
-    cfg.base_data_dir = '/data/jungfrau/instruments/jem2100plus'
-    cfg.measurement_tag = 'Lysozyme'
-
-    print(cfg)
