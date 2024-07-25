@@ -4,6 +4,21 @@ import redis
 from pathlib import Path
 from datetime import datetime
 
+from .string_op import sanitize_label
+
+def auth_token():
+    try:
+        token = os.environ['EPOC_REDIS_TOKEN']
+    except KeyError:
+        raise ValueError('Please set the EPOC_REDIS_TOKEN environment variable')  
+    return token
+
+def redis_host():
+    try:
+        host = os.environ['EPOC_REDIS_HOST']
+    except KeyError:
+        raise ValueError('Please set the EPOC_REDIS_HOST environment variable')  
+    return host
 
 class ConfigurationClient:
     """
@@ -11,8 +26,8 @@ class ConfigurationClient:
     Currently based on Redis but could be extended to other backends
     """
     _experiment_classes = ['UniVie', 'External', 'IP']
-    def __init__(self, host, port=6379, token=None):
-        self.client = redis.Redis(host=host, port=port, password=token)
+    def __init__(self, host, port=6379, token=None, db = 0):
+        self.client = redis.Redis(host=host, port=port, password=token, db=db)
         try:
             self.client.ping()
         except redis.exceptions.ConnectionError:
@@ -27,6 +42,7 @@ class ConfigurationClient:
     
     @PI_name.setter
     def PI_name(self, value : str):
+        value = sanitize_label(value)
         self.client.set('PI_name', value)
 
     @property
@@ -38,6 +54,7 @@ class ConfigurationClient:
 
     @project_id.setter
     def project_id(self, value : str):
+        value = sanitize_label(value)
         self.client.set('project_id', value)
 
     @property
@@ -124,7 +141,7 @@ class ConfigurationClient:
     @property
     def measurement_tag(self) -> str:
         """
-        Tag for the current measurement
+        Tag to identify the current measurement. will be part of the filename
         """
         res = self.client.get('measurement_tag')
         if res is None:
@@ -133,6 +150,7 @@ class ConfigurationClient:
     
     @measurement_tag.setter
     def measurement_tag(self, value : str):
+        value = sanitize_label(value)
         self.client.set('measurement_tag', value)
 
 

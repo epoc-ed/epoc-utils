@@ -1,0 +1,27 @@
+{
+  "info": {
+    "subdir": "noarch"
+  },
+  "packages": {},
+  "packages.conda": {
+    "epoc-2024.7.25-pyh4616a5c_0.conda": {
+      "build": "pyh4616a5c_0",
+      "build_number": 0,
+      "depends": [
+        "python",
+        "rich",
+        "redis-py"
+      ],
+      "license": "MIT",
+      "md5": "c28ab023ecac5b190d0ad5aa52182a3b",
+      "name": "epoc",
+      "noarch": "python",
+      "sha256": "2a1f988fd6aaab00b5114e77519e4dd48a95c443051f2d31debe118729b6301e",
+      "size": 81540478,
+      "subdir": "noarch",
+      "timestamp": 1721890564332,
+      "version": "2024.7.25"
+    }
+  },
+  "repodata_version": 2
+}
