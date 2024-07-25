@@ -20,6 +20,14 @@ def test_PI_name_removes_space():
     assert cfg.PI_name == 'SomeName'
 
 @with_redis
+def test_construction_of_fname():
+    cfg = ConfigurationClient(redis_host(), token=auth_token(), db = test_db)
+    cfg.measurement_tag = 'Lysozyme'
+    cfg.project_id = 'ProjectID'
+    cfg.file_id = 37
+    assert cfg.fname == f'037_ProjectID_Lysozyme_{datetime.now().strftime("%Y-%m-%d")}.h5'
+
+@with_redis
 def test_set_project_id():
     cfg = ConfigurationClient(redis_host(), token=auth_token(), db = test_db)
     cfg.project_id = 'epoc'
@@ -39,3 +47,17 @@ def test_construction_of_data_dir():
     cfg.experiment_class = 'UniVie'
     cfg.base_data_dir = '/data/base/path/'
     assert cfg.data_dir.as_posix() == f'/data/base/path/UniVie/PIName/ProjectID/{datetime.now().strftime("%Y-%m-%d")}'
+
+@with_redis
+def test_last_dataset():
+    cfg = ConfigurationClient(redis_host(), token=auth_token(), db = test_db)
+    cfg.PI_name = 'PIName'
+    cfg.project_id = 'ProjectID'
+    cfg.experiment_class = 'UniVie'
+    cfg.base_data_dir = '/data/base/path/'
+    cfg.measurement_tag = 'Lysozyme'
+    cfg.file_id = 7
+
+    last = f'/data/base/path/UniVie/PIName/ProjectID/{datetime.now().strftime("%Y-%m-%d")}/007_ProjectID_Lysozyme_{datetime.now().strftime("%Y-%m-%d")}.h5'
+    cfg.after_write()
+    assert cfg.last_dataset.as_posix() == last

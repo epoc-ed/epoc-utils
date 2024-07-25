@@ -92,7 +92,7 @@ class ConfigurationClient:
     def file_id(self, value):
         self.client.set('file_id', value)
 
-    def incr_file_id(self):
+    def _incr_file_id(self):
         self.client.incr('file_id')
 
     @property
@@ -174,6 +174,14 @@ class ConfigurationClient:
         #TODO! should we set this manually instead for experiments crossing over midnight?
         """
         return datetime.now().strftime('%Y-%m-%d')
+
+    def after_write(self):
+        """
+        Call after finished an acquisition to update the configuration
+        TODO! Find a better name
+        """
+        self.last_dataset = self.data_dir / self.fname
+        self._incr_file_id()
 
     def __repr__(self) -> str:
         s = f"""
