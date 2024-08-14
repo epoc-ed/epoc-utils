@@ -12,6 +12,7 @@ source:
 requirements:
   build:
     - python 
+    - setuptools
 
   run:
     - python
@@ -19,8 +20,14 @@ requirements:
     - redis-py
 
 test:
+  source_files:
+    - tests/
   imports:
     - epoc
+  commands:
+    - pytest ./tests 
+  requires:
+    - pytest
 
 about:
   home: https://github.com/epoc-ed/epoc-utils
