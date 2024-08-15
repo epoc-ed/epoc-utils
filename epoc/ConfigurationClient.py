@@ -1,6 +1,8 @@
 import os
 import inspect
 import redis
+import yaml
+import json
 from pathlib import Path
 from datetime import datetime
 
@@ -9,6 +11,8 @@ from .string_op import sanitize_label
 def auth_token():
     try:
         token = os.environ['EPOC_REDIS_TOKEN']
+        if token == 'None':
+            token = None
     except KeyError:
         raise ValueError('Please set the EPOC_REDIS_TOKEN environment variable')  
     return token
@@ -32,6 +36,17 @@ class ConfigurationClient:
             self.client.ping()
         except redis.exceptions.ConnectionError:
             raise ValueError(f'Could not connect to server: {host}:{port}')
+
+
+    def from_yaml(self, path: Path):
+        """Return to a know state, or populate a new database"""
+        self.client.flushall()
+        with open(path, 'r') as file:
+            res = yaml.safe_load(file)
+        for key, value in res.items():
+            setattr(self, key, value)
+
+
 
     @property
     def PI_name(self) -> str:
@@ -91,6 +106,72 @@ class ConfigurationClient:
     @file_id.setter
     def file_id(self, value):
         self.client.set('file_id', value)
+
+    @property
+    def nrows(self):
+        res = self.client.get('nrows')
+        if res is None:
+            raise ValueError('nrows not set')
+        return int(res)
+    
+    @property
+    def beam_center(self):
+        res = self.client.get('beam_center')
+        if res is None:
+            raise ValueError('beam_center not set')
+        return json.loads(res.decode('utf-8'))
+    
+    @beam_center.setter
+    def beam_center(self, value):
+        self.client.set('beam_center', json.dumps(value))
+
+    @property
+    def viewer_interval(self):
+        res = self.client.get('viewer_interval')
+        if res is None:
+            raise ValueError('viewer_interval not set')
+        return float(res)
+    
+    @property
+    def viewer_cmin(self):
+        res = self.client.get('viewer_cmin')
+        if res is None:
+            raise ValueError('viewer_cmin not set')
+        return float(res)
+    
+    @viewer_cmin.setter
+    def viewer_cmin(self, value):
+        self.client.set('viewer_cmin', value)
+
+    @property
+    def viewer_cmax(self):
+        res = self.client.get('viewer_cmax')
+        if res is None:
+            raise ValueError('viewer_cmax not set')
+        return float(res)
+    
+    @viewer_cmax.setter
+    def viewer_cmax(self, value):
+        self.client.set('viewer_cmax', value)
+
+    @viewer_interval.setter
+    def viewer_interval(self, value):
+        self.client.set('viewer_interval', value)
+    
+    @nrows.setter
+    def nrows(self, value):
+        self.client.set('nrows', value)
+
+    @property
+    def ncols(self):
+        res = self.client.get('ncols')
+        if res is None:
+            raise ValueError('ncols not set')
+        return int(res)
+    
+    @ncols.setter
+    def ncols(self, value):
+        self.client.set('ncols', value)
 
     def _incr_file_id(self):
         self.client.incr('file_id')
@@ -182,6 +263,19 @@ class ConfigurationClient:
         """
         self.last_dataset = self.data_dir / self.fname
         self._incr_file_id()
+
+    @property
+    def overlays(self):
+        return [json.loads(item.decode('utf-8')) for item in self.client.lrange('overlays', 0, -1)]
+    
+    @overlays.setter
+    def overlays(self, value):
+        self.client.delete('overlays')
+        for item in value:
+            self.client.rpush('overlays', json.dumps(item))
+    
+    def add_overlay(self, value):
+        self.client.rpush('overlays', value)
 
     def __repr__(self) -> str:
         s = f"""
