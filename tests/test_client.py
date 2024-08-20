@@ -25,7 +25,7 @@ def test_construction_of_fname():
     cfg.measurement_tag = 'Lysozyme'
     cfg.project_id = 'ProjectID'
     cfg.file_id = 37
-    assert cfg.fname == f'037_ProjectID_Lysozyme_{datetime.now().strftime("%Y-%m-%d")}.h5'
+    assert cfg.fname == f'037_ProjectID_Lysozyme_{datetime.now().strftime("%Y-%m-%d")}_master.h5'
 
 @with_redis
 def test_set_project_id():
@@ -58,6 +58,6 @@ def test_last_dataset():
     cfg.measurement_tag = 'Lysozyme'
     cfg.file_id = 7
 
-    last = f'/data/base/path/UniVie/PIName/ProjectID/{datetime.now().strftime("%Y-%m-%d")}/007_ProjectID_Lysozyme_{datetime.now().strftime("%Y-%m-%d")}.h5'
+    last = f'/data/base/path/UniVie/PIName/ProjectID/{datetime.now().strftime("%Y-%m-%d")}/007_ProjectID_Lysozyme_{datetime.now().strftime("%Y-%m-%d")}_master.h5'
     cfg.after_write()
     assert cfg.last_dataset.as_posix() == last

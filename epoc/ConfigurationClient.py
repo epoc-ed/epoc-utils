@@ -228,7 +228,7 @@ class ConfigurationClient:
         res = self.client.get('measurement_tag')
         if res is None:
             raise ValueError('fname not set')
-        s = f'{self.file_id:03d}_{self.project_id}_{res.decode("utf-8")}_{self.today}.h5'
+        s = f'{self.file_id:03d}_{self.project_id}_{res.decode("utf-8")}_{self.today}_master.h5'
         return s
     
     @property
