@@ -61,3 +61,9 @@ def test_last_dataset():
     last = f'/data/base/path/UniVie/PIName/ProjectID/{datetime.now().strftime("%Y-%m-%d")}/007_ProjectID_Lysozyme_{datetime.now().strftime("%Y-%m-%d")}_master.h5'
     cfg.after_write()
     assert cfg.last_dataset.as_posix() == last
+
+@with_redis
+def test_set_XDS_template():
+    cfg = ConfigurationClient(redis_host(), token=auth_token(), db = test_db)
+    cfg.XDS_template = '/path/to/template.INP'
+    assert cfg.XDS_template == '/path/to/template.INP'

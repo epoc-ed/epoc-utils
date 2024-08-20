@@ -32,7 +32,7 @@ cfg.measurement_tag = 'Lysozyme'
 "/data/jungfrau/instruments/jem2100plus/UniVie/epoc/2024-08-20/"
 
 >>> c.fname
-"000_epoc_Lysozyme_2024-08-20.h5"
+"000_epoc_Lysozyme_2024-08-20_master.h5"
 
 ```
 
