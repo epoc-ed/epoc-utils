@@ -18,6 +18,7 @@ requirements:
     - python
     - rich
     - redis-py
+    - pyyaml
 
 test:
   source_files:
