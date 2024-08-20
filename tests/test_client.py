@@ -1,6 +1,7 @@
 import pytest
 from epoc import ConfigurationClient, auth_token, redis_host
 from datetime import datetime
+from pathlib import Path
 with_redis = pytest.mark.skipif("not config.getoption('with_redis')")
 
 #Avoid using the default database in case someone is using it for manual testing
@@ -63,7 +64,22 @@ def test_last_dataset():
     assert cfg.last_dataset.as_posix() == last
 
 @with_redis
+def test_file_id_increments_with_after_write():
+    cfg = ConfigurationClient(redis_host(), token=auth_token(), db = test_db)
+    cfg.file_id = 17
+    cfg.after_write()
+    assert cfg.file_id == 18
+
+@with_redis
 def test_set_XDS_template():
     cfg = ConfigurationClient(redis_host(), token=auth_token(), db = test_db)
     cfg.XDS_template = '/path/to/template.INP'
-    assert cfg.XDS_template == '/path/to/template.INP'
+    assert cfg.XDS_template == Path('/path/to/template.INP')
+
+@with_redis
+def test_set_rows_and_cols():
+    cfg = ConfigurationClient(redis_host(), token=auth_token(), db = test_db)
+    cfg.rows = 100
+    cfg.cols = 200
+    assert cfg.rows == 100
+    assert cfg.cols == 200
