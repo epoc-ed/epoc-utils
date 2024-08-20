@@ -1,7 +1,7 @@
 from epoc import ConfigurationClient, auth_token, redis_host
 
 
-# c = ConfigurationClient(redis_host(), token=auth_token())
+c = ConfigurationClient(redis_host(), token=auth_token())
 
 # #Clear the database
 # # cfg.client.flushall()

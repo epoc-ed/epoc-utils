@@ -1,4 +1,3 @@
-
 #Data collection 
 project_id: epoc
 experiment_class: UniVie
@@ -23,13 +22,11 @@ viewer_interval: 200
 viewer_cmin: 0
 viewer_cmax: 20e3
 
-# viewer:
-#   interval: 200
-#   cmin: 0
-#   cmax: 20e3
 
 # Written to XDS template file
 beam_center: [173, 170]
+
+XDS_template: "/xtal/Integration/XDS/CCSA-templates/XDS-JUNGFRAU_50cm.INP"
 
 # Overlays to be drawn in the GUI
 overlays:

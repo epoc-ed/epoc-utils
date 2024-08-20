@@ -89,6 +89,18 @@ class ConfigurationClient:
             value = value.as_posix()
         self.client.set('last_dataset', value)
 
+    @property
+    def XDS_template(self) -> Path:
+        res = self.client.get('XDS_template')
+        if res is None:
+            raise ValueError('XDS_template not set')
+        return Path(res.decode('utf-8'))
+    
+    @XDS_template.setter
+    def XDS_template(self, value : Path | str):
+        if isinstance(value, Path):
+            value = value.as_posix()
+        self.client.set('XDS_template', value)
     
     @property
     def file_id(self):
