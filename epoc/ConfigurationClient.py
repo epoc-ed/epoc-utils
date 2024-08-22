@@ -46,15 +46,12 @@ class ConfigurationClient:
         Return to a know state, or populate a new database
         args: path to the yaml file flush: if True, clear the database before loading
         """
-        # self.client.flushall()
         if flush_db:
             self.client.flushdb()
         with open(path, 'r') as file:
             res = yaml.safe_load(file)
         for key, value in res.items():
             setattr(self, key, value)
-
-
 
     @property
     def PI_name(self) -> str:
