@@ -109,7 +109,7 @@ def test_set_XDS_template(cfg):
 
 @with_redis
 def test_set_rows_and_cols(cfg):
-    cfg.rows = 100
-    cfg.cols = 200
-    assert cfg.rows == 100
-    assert cfg.cols == 200
+    cfg.nrows = 100
+    cfg.ncols = 200
+    assert cfg.nrows == 100
+    assert cfg.ncols == 200

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 
+from .utils import freeze
 from .string_op import sanitize_label
 
 def auth_token():
@@ -24,6 +25,7 @@ def redis_host():
         raise ValueError('Please set the EPOC_REDIS_HOST environment variable')  
     return host
 
+@freeze
 class ConfigurationClient:
     """
     Provides synchronization between PCs and persistent storage of values
