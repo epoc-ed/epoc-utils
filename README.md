@@ -13,8 +13,10 @@ from epoc import ConfigurationClient, auth_token, redis_host
 c = ConfigurationClient(redis_host(), token=auth_token())
 
 
-#Clear the database and populate it from a yaml file. Note that this affects ALL users on ALL machines connected to the same database
-c.from_yaml('epoc-config.yaml')
+#Clear the database and populate it from a yaml file. Clears the selected database only, but will affect all users connected to the same machine!
+c.from_yaml('epoc-config.yaml', flush_db = True)
+
+
 ```
 
 ### Paths
