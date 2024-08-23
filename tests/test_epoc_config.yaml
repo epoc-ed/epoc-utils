@@ -1,0 +1,35 @@
+#Data collection 
+project_id: epoc
+experiment_class: External
+base_data_dir: /some/random/path
+measurement_tag: MySample
+PI_name: Erik
+file_id: 3
+
+#Detector configuration
+nrows: 514
+ncols: 1030
+# detector:
+#   det_id: 272
+  
+# plot: 
+#  origin:  'lower'
+
+# compute:
+#   n_cores: 12
+
+viewer_interval: 200
+viewer_cmin: 0
+viewer_cmax: 20e3
+
+
+# Written to XDS template file
+beam_center: [173, 170]
+
+XDS_template: "/xtal/Integration/XDS/CCSA-templates/XDS-JUNGFRAU_50cm.INP"
+
+# Overlays to be drawn in the GUI
+overlays:
+  - {"type": "circle", "xy": [173,170], "radius": 160,"ec": "r", "fill" : false, "lw": 2}
+  - {"type": "circle", "xy": [173,170], "radius": 5,"ec": "g", "fill" : false, "lw": 2}
+  - {"type": "rectangle", "xy": [400,400], "width": 10, "height": 5, "angle": 30, "ec":"y"}

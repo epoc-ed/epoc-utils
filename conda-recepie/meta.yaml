@@ -18,6 +18,7 @@ requirements:
     - python
     - rich
     - redis-py
+    - pyyaml
 
 test:
   source_files:
@@ -28,6 +29,7 @@ test:
     - pytest ./tests 
   requires:
     - pytest
+    - freezegun
 
 about:
   home: https://github.com/epoc-ed/epoc-utils

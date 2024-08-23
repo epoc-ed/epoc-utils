@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 
+from .utils import freeze
 from .string_op import sanitize_label
 
 def auth_token():
@@ -24,12 +25,14 @@ def redis_host():
         raise ValueError('Please set the EPOC_REDIS_HOST environment variable')  
     return host
 
+@freeze
 class ConfigurationClient:
     """
     Provides synchronization between PCs and persistent storage of values
     Currently based on Redis but could be extended to other backends
     """
     _experiment_classes = ['UniVie', 'External', 'IP']
+    _encoding = 'utf-8'
     def __init__(self, host, port=6379, token=None, db = 0):
         self.client = redis.Redis(host=host, port=port, password=token, db=db)
         try:
@@ -38,22 +41,24 @@ class ConfigurationClient:
             raise ValueError(f'Could not connect to server: {host}:{port}')
 
 
-    def from_yaml(self, path: Path):
-        """Return to a know state, or populate a new database"""
-        self.client.flushall()
+    def from_yaml(self, path: Path, flush_db = False):
+        """
+        Return to a know state, or populate a new database
+        args: path to the yaml file flush: if True, clear the database before loading
+        """
+        if flush_db:
+            self.client.flushdb()
         with open(path, 'r') as file:
             res = yaml.safe_load(file)
         for key, value in res.items():
             setattr(self, key, value)
-
-
 
     @property
     def PI_name(self) -> str:
         res = self.client.get('PI_name')
         if res is None:
             raise ValueError('PI_name not set')
-        return res.decode('utf-8')
+        return res.decode(ConfigurationClient._encoding)
     
     @PI_name.setter
     def PI_name(self, value : str):
@@ -65,7 +70,7 @@ class ConfigurationClient:
         res = self.client.get('project_id')
         if res is None:
             raise ValueError('project_id not set')
-        return res.decode('utf-8')
+        return res.decode(ConfigurationClient._encoding)
 
     @project_id.setter
     def project_id(self, value : str):
@@ -81,7 +86,7 @@ class ConfigurationClient:
         res = self.client.get('last_dataset')
         if res is None:
             return None
-        return Path(res.decode('utf-8'))
+        return Path(res.decode(ConfigurationClient._encoding))
     
     @last_dataset.setter
     def last_dataset(self, value : Path | str):
@@ -94,7 +99,7 @@ class ConfigurationClient:
         res = self.client.get('XDS_template')
         if res is None:
             raise ValueError('XDS_template not set')
-        return Path(res.decode('utf-8'))
+        return Path(res.decode(ConfigurationClient._encoding))
     
     @XDS_template.setter
     def XDS_template(self, value : Path | str):
@@ -131,7 +136,7 @@ class ConfigurationClient:
         res = self.client.get('beam_center')
         if res is None:
             raise ValueError('beam_center not set')
-        return json.loads(res.decode('utf-8'))
+        return json.loads(res.decode(ConfigurationClient._encoding))
     
     @beam_center.setter
     def beam_center(self, value):
@@ -193,7 +198,7 @@ class ConfigurationClient:
         res = self.client.get('base_data_dir')
         if res is None:
             raise ValueError('base_data_dir not set')
-        return Path(res.decode('utf-8'))
+        return Path(res.decode(ConfigurationClient._encoding))
     
     @base_data_dir.setter
     def base_data_dir(self, value: Path|str):
@@ -228,8 +233,16 @@ class ConfigurationClient:
         res = self.client.get('measurement_tag')
         if res is None:
             raise ValueError('fname not set')
-        s = f'{self.file_id:03d}_{self.project_id}_{res.decode("utf-8")}_{self.today}.h5'
+        s = f'{self.file_id:03d}_{self.project_id}_{res.decode("utf-8")}_{self.today}_master.h5'
         return s
+    
+    @property
+    def fpath(self) -> Path:
+        return self.data_dir / self.fname
+    
+    @property
+    def log_fpath(self) -> Path:
+        return (self.data_dir / self.fname).with_suffix('.log')
     
     @property
     def measurement_tag(self) -> str:
@@ -239,7 +252,7 @@ class ConfigurationClient:
         res = self.client.get('measurement_tag')
         if res is None:
             raise ValueError('measurement_tag not set')
-        return res.decode('utf-8')
+        return res.decode(ConfigurationClient._encoding)
     
     @measurement_tag.setter
     def measurement_tag(self, value : str):
@@ -252,7 +265,7 @@ class ConfigurationClient:
         res = self.client.get('experiment_class')
         if res is None:
             raise ValueError('experiment_class not set')
-        return res.decode('utf-8')
+        return res.decode(ConfigurationClient._encoding)
     
     @experiment_class.setter
     def experiment_class(self, value : str):
@@ -278,7 +291,7 @@ class ConfigurationClient:
 
     @property
     def overlays(self):
-        return [json.loads(item.decode('utf-8')) for item in self.client.lrange('overlays', 0, -1)]
+        return [json.loads(item.decode(ConfigurationClient._encoding)) for item in self.client.lrange('overlays', 0, -1)]
     
     @overlays.setter
     def overlays(self, value):
