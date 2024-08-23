@@ -13,3 +13,5 @@ c = ConfigurationClient(redis_host(), token=auth_token())
 # # cfg.measurement_tag = 'Lysozyme'
 
 # print(c)
+
+
