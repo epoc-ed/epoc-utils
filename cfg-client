@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+import os
+from epoc import ConfigurationClient
+
+os.environ['PYTHONINSPECT'] = 'TRUE' #force interactive mode
+c = ConfigurationClient()

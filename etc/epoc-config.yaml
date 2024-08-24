@@ -18,9 +18,9 @@ ncols: 1030
 # compute:
 #   n_cores: 12
 
-viewer_interval: 200
+viewer_interval: 100
 viewer_cmin: 0
-viewer_cmax: 20e3
+viewer_cmax: 5e3
 
 
 # Written to XDS template file
@@ -30,6 +30,7 @@ XDS_template: "/xtal/Integration/XDS/CCSA-templates/XDS-JUNGFRAU_50cm.INP"
 
 # Overlays to be drawn in the GUI
 overlays:
-  - {"type": "circle", "xy": [173,170], "radius": 160,"ec": "r", "fill" : false, "lw": 2}
-  - {"type": "circle", "xy": [173,170], "radius": 5,"ec": "g", "fill" : false, "lw": 2}
-  - {"type": "rectangle", "xy": [400,400], "width": 10, "height": 5, "angle": 30, "ec":"y"}
+- {'type': 'circle', 'xy': [526, 253], 'radius': 188, 'ec': 'r', 'fill': False, 'lw': 2}
+- {'type': 'circle', 'xy': [526, 253], 'radius': 5, 'ec': 'g', 'fill': False, 'lw': 2}
+- {'type': 'rectangle', 'xy': [574, 52], 'width': 60, 'height': 31, 'angle': 27.5, 'ec': 'y', 'fill': False}
+- {'type': 'rectangle', 'xy': [0, 0], 'width': 1000, 'height': 1, 'angle': 19.8, 'ec': 'r', 'fill': False}

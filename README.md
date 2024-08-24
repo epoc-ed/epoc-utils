@@ -4,20 +4,34 @@ Tools related to the running of experiments and organization of data
 
 ## ConfigurationClient
 
+To run with the default constructor without supplying extra arguments. Set
+```bash
+#Where does the redis server run?
+export EPICS_REDIS_HOST=localhost
+
+#Optionally
+export EPICS_REDIS_TOKEN=yoursupersafepassword
+export EPICS_REDIS_PORT=6379 #in case not the default
+export EPICS_REDIS_DB=0 #same here
+```
+
 
 ```python
-from epoc import ConfigurationClient, auth_token, redis_host
+from epoc import ConfigurationClient
 
-#auth_token and redis_host are convenient functions that looks for the env variables EPOC_AUTH_TOKEN and EPOC_REDIS_HOST
-
-c = ConfigurationClient(redis_host(), token=auth_token())
+c = ConfigurationClient()
 
 
 #Clear the database and populate it from a yaml file. Clears the selected database only, but will affect all users connected to the same machine!
 c.from_yaml('epoc-config.yaml', flush_db = True)
 
+#Default is to update just the fields that are in the yaml file
+c.from_yaml('minor-config.yaml')
 
+#It is also possible to save the current state to a yaml file
+c.to_yaml('my-config.yaml')
 ```
+
 
 ### Paths
 

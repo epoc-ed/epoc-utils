@@ -10,13 +10,21 @@ from .utils import freeze
 from .string_op import sanitize_label
 
 def auth_token():
-    try:
-        token = os.environ['EPOC_REDIS_TOKEN']
-        if token == 'None':
-            token = None
-    except KeyError:
-        raise ValueError('Please set the EPOC_REDIS_TOKEN environment variable')  
+    """
+    Try to read the token from the environment variable. If not token is available
+    return None. This allows for unauthenticated access to the redis server.
+    """
+    token = os.getenv('EPOC_REDIS_TOKEN')
+    #Allow for it to be set to None as a string
+    if token == 'None':
+        token = None
     return token
+
+def redis_port():
+    port = os.getenv('EPOC_REDIS_PORT')
+    if port is None:
+        return 6379
+    return int(port)
 
 def redis_host():
     try:
@@ -24,6 +32,13 @@ def redis_host():
     except KeyError:
         raise ValueError('Please set the EPOC_REDIS_HOST environment variable')  
     return host
+
+def redis_db():
+    db = os.getenv('EPOC_REDIS_DB')
+    if db is None:
+        return 0
+    return int(db)
+
 
 @freeze
 class ConfigurationClient:
@@ -33,7 +48,7 @@ class ConfigurationClient:
     """
     _experiment_classes = ['UniVie', 'External', 'IP']
     _encoding = 'utf-8'
-    def __init__(self, host, port=6379, token=None, db = 0):
+    def __init__(self, host = redis_host(), port=redis_port(), token=auth_token(), db = redis_db()):
         self.client = redis.Redis(host=host, port=port, password=token, db=db)
         try:
             self.client.ping()
@@ -52,6 +67,37 @@ class ConfigurationClient:
             res = yaml.safe_load(file)
         for key, value in res.items():
             setattr(self, key, value)
+
+    def to_yaml(self, path: Path):
+        """
+        Save the current configuration to a yaml file
+        """
+        res = {}
+        non_writable = {}
+        #Find the keys
+        for key, item in vars(ConfigurationClient).items():
+            if isinstance(item, property):
+                # It could be that some values are not set
+                # and in this case we ignore them
+                try:
+                    value = getattr(self, key)
+                    if isinstance(value, Path):
+                        value = value.as_posix()
+                    if item.fset is None:
+                        non_writable[key] = value
+                    else:
+                        res[key] = value
+                except ValueError:
+                    pass
+                
+        with open(path, 'w') as file:
+            file.write('# Configuration file for EPOC\n')
+            file.write(f'# Saved: {datetime.now()}\n\n')
+            file.write('# Generated value at time of saving\n')
+            for key, value in non_writable.items():
+                file.write(f'# {key}: {value}\n')
+            file.write('\n')
+            yaml.safe_dump(res, file, sort_keys=False)
 
     @property
     def PI_name(self) -> str:
@@ -301,6 +347,28 @@ class ConfigurationClient:
     
     def add_overlay(self, value):
         self.client.rpush('overlays', value)
+
+    @property
+    def mag_value_diff(self):
+        res = self.client.get('mag_value_diff')
+        if res is None:
+            raise ValueError('mag_value_diff not set')
+        return float(res)
+
+    @mag_value_diff.setter
+    def mag_value_diff(self, value):
+        self.client.set('mag_value_diff', value)
+
+    @property
+    def mag_value_img(self):
+        res = self.client.get('mag_value_img')
+        if res is None:
+            raise ValueError('mag_value_img not set')
+        return float(res)
+    
+    @mag_value_img.setter
+    def mag_value_img(self, value):
+        self.client.set('mag_value_img', value)
 
     def __repr__(self) -> str:
         s = f"""
