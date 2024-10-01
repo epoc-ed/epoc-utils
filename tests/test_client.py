@@ -81,6 +81,15 @@ def test_project_id_removes_slash(cfg):
     cfg.project_id = 'epoc/33'
     assert cfg.project_id == 'epoc33'
 
+@with_redis
+def test_rotation_speed_idx(cfg):
+    cfg.rotation_speed_idx = 1
+    assert cfg.rotation_speed_idx == 1
+
+@with_redis
+def test_rotation_speed_idx_must_throws_on_other_value(cfg):
+    with pytest.raises(ValueError):
+        cfg.rotation_speed_idx = 7
 
 @with_redis
 def test_last_dataset(cfg):

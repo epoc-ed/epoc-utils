@@ -154,6 +154,21 @@ class ConfigurationClient:
         self.client.set('XDS_template', value)
     
     @property
+    def rotation_speed_idx(self) -> int:
+        res = self.client.get('rotation_speed_idx')
+        #If the value was not set then go to the default (2==1deg/s)
+        if res is None:
+            self.rotation_speed = 2
+        return int(res)
+    
+    @rotation_speed_idx.setter
+    def rotation_speed_idx(self, value : int):
+        value = int(value)
+        if value not in [0, 1, 2, 3]:
+            raise ValueError('Invalid rotation speed. Possible values are 0, 1, 2, 3')
+        self.client.set('rotation_speed_idx', value)
+
+    @property
     def file_id(self):
         """
         Unique identifier for the current dataset
