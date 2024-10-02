@@ -92,6 +92,11 @@ def test_rotation_speed_idx_must_throws_on_other_value(cfg):
         cfg.rotation_speed_idx = 7
 
 @with_redis
+def test_not_set_gives_default(cfg):
+    cfg.client.delete('rotation_speed_idx')
+    assert cfg.rotation_speed_idx == 2
+
+@with_redis
 def test_last_dataset(cfg):
     cfg.PI_name = 'PIName'
     cfg.project_id = 'ProjectID'
