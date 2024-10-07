@@ -35,6 +35,7 @@ c.to_yaml('my-config.yaml')
 
 ### Paths
 
+
 ```python
 #The location and file name is specified with a series of properties
 cfg.PI_name = 'Erik'
@@ -43,14 +44,19 @@ cfg.experiment_class = 'UniVie'
 cfg.base_data_dir = '/data/jungfrau/instruments/jem2100plus'
 cfg.measurement_tag = 'Lysozyme'
 
-#Given that the current date is 2024-08-20
+#Given that the current date is 2024-08-20 at 12:24
+
+#[base_data_dir]/experiment_class]/[project_id]/[date]/
 >>> c.data_dir 
 "/data/jungfrau/instruments/jem2100plus/UniVie/epoc/2024-08-20/"
 
->>> c.fname
-"000_epoc_Lysozyme_2024-08-20_master.h5"
 
+#[file_id]_[project_id]_[measurement_tag]_[date]_[time]_master.h5
+>>> c.fname
+"000_epoc_Lysozyme_2024-08-20_1224_master.h5"
 ```
+
+
 
 ### Overlays
 Overlays to be draw by the GUI can be specified in the yaml file or added directly in the client
