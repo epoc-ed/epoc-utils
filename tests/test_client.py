@@ -127,3 +127,21 @@ def test_set_rows_and_cols(cfg):
     cfg.ncols = 200
     assert cfg.nrows == 100
     assert cfg.ncols == 200
+
+
+@with_redis
+def test_experiment_class(cfg):
+    cfg.experiment_class = 'UniVie'
+    assert cfg.experiment_class == 'UniVie'
+
+    cfg.experiment_class = 'External'
+    assert cfg.experiment_class == 'External'
+
+    cfg.experiment_class = 'IP'
+    assert cfg.experiment_class == 'IP'
+
+@with_redis
+def test_experiment_class_throws_on_not_allowed_value(cfg):
+    with pytest.raises(ValueError):
+        cfg.experiment_class = 'SomeRandomName'
+    
