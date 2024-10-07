@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="epoc",
-    version= '2024.10.7',
+    version= '2024.10.7.1',
     author="Erik Frojdh",
     author_email="erik.frojdh@psi.ch",
     description="Configuration of experiments in the EPOC project",

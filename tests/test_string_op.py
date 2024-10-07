@@ -16,3 +16,6 @@ def test_works_on_empty_string():
 
 def test_works_on_special_characters():
     assert sanitize_label('Hello!@#$%^&*()_+World') == 'Hello_World'
+
+def test_do_not_remove_dash():
+    assert sanitize_label('Hello-World') == 'Hello-World'
