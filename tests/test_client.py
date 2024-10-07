@@ -26,7 +26,8 @@ def test_construction_of_fname(cfg):
     cfg.project_id = 'ProjectID'
     cfg.file_id = 37
 
-    with freeze_time('2020-01-01'):
+    # 2023-01-01 12:00:00
+    with freeze_time('2020-01-01 11:53:12'):
         assert cfg.fname == f'037_ProjectID_Lysozyme_2020-01-01_master.h5'
 
 @with_redis
