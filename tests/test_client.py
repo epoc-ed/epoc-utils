@@ -26,9 +26,13 @@ def test_construction_of_fname(cfg):
     cfg.project_id = 'ProjectID'
     cfg.file_id = 37
 
-    # 2023-01-01 12:00:00
+
     with freeze_time('2020-01-01 11:53:12'):
-        assert cfg.fname == f'037_ProjectID_Lysozyme_2020-01-01_master.h5'
+        assert cfg.fname == f'037_ProjectID_Lysozyme_2020-01-01_1153_master.h5'
+
+    #time is in 24h format
+    with freeze_time('2020-01-01 23:12:11'):
+        assert cfg.fname == f'037_ProjectID_Lysozyme_2020-01-01_2312_master.h5'
 
 @with_redis
 def test_construction_of_data_dir(cfg):
@@ -43,7 +47,7 @@ def test_construction_of_data_dir(cfg):
 @with_redis
 def test_fpath(cfg):
     with freeze_time('2024-08-13'):
-        assert cfg.fpath == Path(f'/data/base/path/UniVie/PIName/ProjectID/2024-08-13/037_ProjectID_Lysozyme_2024-08-13_master.h5')
+        assert cfg.fpath == Path(f'/data/base/path/UniVie/PIName/ProjectID/2024-08-13/037_ProjectID_Lysozyme_2024-08-13_0000_master.h5')
 
 @with_redis
 def test_loading_from_yaml(cfg):
@@ -107,7 +111,7 @@ def test_last_dataset(cfg):
     cfg.file_id = 7
 
     with freeze_time('2024-08-13'):
-        last = Path('/data/base/path/UniVie/PIName/ProjectID/2024-08-13/007_ProjectID_Lysozyme_2024-08-13_master.h5')
+        last = Path('/data/base/path/UniVie/PIName/ProjectID/2024-08-13/007_ProjectID_Lysozyme_2024-08-13_0000_master.h5')
         cfg.after_write()
         assert cfg.last_dataset == last
 

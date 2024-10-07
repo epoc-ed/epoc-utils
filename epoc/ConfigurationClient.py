@@ -296,7 +296,7 @@ class ConfigurationClient:
         res = self.client.get('measurement_tag')
         if res is None:
             raise ValueError('fname not set')
-        s = f'{self.file_id:03d}_{self.project_id}_{res.decode("utf-8")}_{self.today}_master.h5'
+        s = f'{self.file_id:03d}_{self.project_id}_{res.decode("utf-8")}_{self.timestamp}_master.h5'
         return s
     
     @property
@@ -343,6 +343,14 @@ class ConfigurationClient:
         #TODO! should we set this manually instead for experiments crossing over midnight?
         """
         return datetime.now().strftime('%Y-%m-%d')
+
+    @property
+    def timestamp(self) -> str:
+        """
+        Returns the current date in the format YYYY-MM-DD
+        #TODO! should we set this manually instead for experiments crossing over midnight?
+        """
+        return datetime.now().strftime('%Y-%m-%d_%H%M')
 
     def after_write(self):
         """
