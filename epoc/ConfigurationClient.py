@@ -395,6 +395,39 @@ class ConfigurationClient:
     def mag_value_img(self, value):
         self.client.set('mag_value_img', value)
 
+    @property
+    def receiver_endpoint(self):
+        res = self.client.get('receiver_endpoint')
+        if res is None:
+            raise ValueError('receiver_endpoint not set')
+        return res.decode('utf-8')
+    
+    @receiver_endpoint.setter
+    def receiver_endpoint(self, value):
+        self.client.set('receiver_endpoint', value)
+
+    @property
+    def cal_dir(self):
+        res = self.client.get('cal_dir')
+        if res is None:
+            raise ValueError('cal_dir not set')
+        return Path(res.decode('utf-8'))
+    
+    @cal_dir.setter
+    def cal_dir(self, value):
+        self.client.set('cal_dir', value)
+
+    @property
+    def frames_to_sum(self):
+        res = self.client.get('frames_to_sum')
+        if res is None:
+            raise ValueError('frames_to_sum not set')
+        return int(res)
+    
+    @frames_to_sum.setter
+    def frames_to_sum(self, value):
+        self.client.set('frames_to_sum', value)
+
     def __repr__(self) -> str:
         s = f"""
         Configuration:

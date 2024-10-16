@@ -54,6 +54,10 @@ cfg.measurement_tag = 'Lysozyme'
 #[file_id]_[project_id]_[measurement_tag]_[date]_[time]_master.h5
 >>> c.fname
 "000_epoc_Lysozyme_2024-08-20_1224_master.h5"
+
+#Where should we look for the jungfrau_receiver?
+>>> c.receiver_endpoint
+"tcp://localhost:5555"
 ```
 
 

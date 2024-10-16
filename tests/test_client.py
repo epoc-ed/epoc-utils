@@ -150,3 +150,23 @@ def test_experiment_class_throws_on_not_allowed_value(cfg):
     with pytest.raises(ValueError):
         cfg.experiment_class = 'SomeRandomName'
     
+def test_set_rows_and_cols(cfg):
+    cfg.rows = 100
+    cfg.cols = 200
+    assert cfg.rows == 100
+    assert cfg.cols == 200
+
+@with_redis
+def test_set_receiver_endpoint(cfg):
+    cfg.receiver_endpoint = 'tcp://localhost:5555'
+    assert cfg.receiver_endpoint == 'tcp://localhost:5555'  
+
+@with_redis
+def test_frames_to_sum(cfg):
+    cfg.frames_to_sum = 10
+    assert cfg.frames_to_sum == 10
+
+@with_redis
+def test_caldir(cfg):
+    cfg.caldir = '/path/to/caldir'
+    assert cfg.caldir == Path('/path/to/caldir')
