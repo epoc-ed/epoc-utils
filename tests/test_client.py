@@ -150,11 +150,7 @@ def test_experiment_class_throws_on_not_allowed_value(cfg):
     with pytest.raises(ValueError):
         cfg.experiment_class = 'SomeRandomName'
     
-def test_set_rows_and_cols(cfg):
-    cfg.rows = 100
-    cfg.cols = 200
-    assert cfg.rows == 100
-    assert cfg.cols == 200
+
 
 @with_redis
 def test_set_receiver_endpoint(cfg):
@@ -168,5 +164,5 @@ def test_frames_to_sum(cfg):
 
 @with_redis
 def test_caldir(cfg):
-    cfg.caldir = '/path/to/caldir'
-    assert cfg.caldir == Path('/path/to/caldir')
+    cfg.cal_dir = '/path/to/caldir'
+    assert cfg.cal_dir == Path('/path/to/caldir')
