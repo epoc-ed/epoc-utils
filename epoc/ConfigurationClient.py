@@ -296,7 +296,7 @@ class ConfigurationClient:
         res = self.client.get('measurement_tag')
         if res is None:
             raise ValueError('fname not set')
-        s = f'{self.file_id:03d}_{self.project_id}_{res.decode("utf-8")}_{self.timestamp}_master.h5'
+        s = f'{self.file_id:03d}_{self.project_id}_{res.decode(ConfigurationClient._encoding)}_{self.timestamp}_master.h5'
         return s
     
     @property
@@ -400,7 +400,7 @@ class ConfigurationClient:
         res = self.client.get('receiver_endpoint')
         if res is None:
             raise ValueError('receiver_endpoint not set')
-        return res.decode('utf-8')
+        return res.decode(ConfigurationClient._encoding)
     
     @receiver_endpoint.setter
     def receiver_endpoint(self, value):
@@ -411,7 +411,7 @@ class ConfigurationClient:
         res = self.client.get('cal_dir')
         if res is None:
             raise ValueError('cal_dir not set')
-        return Path(res.decode('utf-8'))
+        return Path(res.decode(ConfigurationClient._encoding))
     
     @cal_dir.setter
     def cal_dir(self, value):
@@ -437,7 +437,7 @@ class ConfigurationClient:
         res = self.client.get('temserver')
         if res is None:
             raise ValueError('temserver not set')
-        return res.decode('utf-8')
+        return res.decode(ConfigurationClient._encoding)
     
     @temserver.setter
     def temserver(self, value):
