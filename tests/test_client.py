@@ -166,3 +166,9 @@ def test_frames_to_sum(cfg):
 def test_caldir(cfg):
     cfg.cal_dir = '/path/to/caldir'
     assert cfg.cal_dir == Path('/path/to/caldir')
+
+
+@with_redis
+def test_temserver(cfg):
+    cfg.temserver = 'tcp://localhost:5555'
+    assert cfg.temserver == 'tcp://localhost:5555'

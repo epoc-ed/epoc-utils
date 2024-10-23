@@ -428,6 +428,21 @@ class ConfigurationClient:
     def frames_to_sum(self, value):
         self.client.set('frames_to_sum', value)
 
+    @property
+    def temserver(self):
+        """
+        ZMQ Endpoint for the TEM server
+        For example: tcp://TEM-pc:5555
+        """
+        res = self.client.get('temserver')
+        if res is None:
+            raise ValueError('temserver not set')
+        return res.decode('utf-8')
+    
+    @temserver.setter
+    def temserver(self, value):
+        self.client.set('temserver', value)
+
     def __repr__(self) -> str:
         s = f"""
         Configuration:
