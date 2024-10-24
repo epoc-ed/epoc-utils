@@ -443,6 +443,18 @@ class ConfigurationClient:
     def temserver(self, value):
         self.client.set('temserver', value)
 
+    @property
+    def jfjoch_host(self):
+        res = self.client.get('jfjoch_host')
+        if res is None:
+            raise ValueError('jfjoch_host not set')
+        return res.decode(ConfigurationClient._encoding)
+    
+    @jfjoch_host.setter
+    def jfjoch_host(self, value):
+        self.client.set('jfjoch_host', value)
+
+
     def __repr__(self) -> str:
         s = f"""
         Configuration:

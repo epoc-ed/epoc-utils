@@ -16,7 +16,7 @@ class JungfraujochWrapper:
         self.api_client = jfjoch_client.ApiClient(self.configuration)
         self.api_instance = jfjoch_client.DefaultApi(self.api_client)
         self._image_time_us = 50000 #100x500us
-        self._lots_of_images = 10000000
+        self._lots_of_images = 72000 #1h at 20Hz
 
     def init(self):
         """Initialize Jungfraujoch. Run once after startup or when restarting the broker"""

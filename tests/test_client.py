@@ -172,3 +172,8 @@ def test_caldir(cfg):
 def test_temserver(cfg):
     cfg.temserver = 'tcp://localhost:5555'
     assert cfg.temserver == 'tcp://localhost:5555'
+
+@with_redis
+def test_set_jfjoch_host(cfg):
+    cfg.jfjoch_host = 'http://localhost:5232'
+    assert cfg.jfjoch_host == 'http://localhost:5232'
