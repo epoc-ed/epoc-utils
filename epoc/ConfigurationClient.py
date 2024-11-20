@@ -49,7 +49,13 @@ class ConfigurationClient:
     _experiment_classes = ['UniVie', 'External', 'IP']
     _encoding = 'utf-8'
     _default_rotation_speed_idx = 2
-    def __init__(self, host = redis_host(), port=redis_port(), token=auth_token(), db = redis_db()):
+    def __init__(self, host = None, port=redis_port(), token=auth_token(), db = redis_db()):
+
+        #Avoid placing in constructor due to import error
+        if host is None:
+            host = redis_host()
+        
+
         self.client = redis.Redis(host=host, port=port, password=token, db=db)
         try:
             self.client.ping()
