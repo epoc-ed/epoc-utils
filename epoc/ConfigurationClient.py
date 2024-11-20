@@ -212,6 +212,18 @@ class ConfigurationClient:
         self.client.set('beam_center', json.dumps(value))
 
     @property
+    def threshold(self) -> int:
+        """Threshold that is applied after conversion but before summing of images."""
+        res = self.client.get('threshold')
+        if res is None:
+            raise ValueError('threshold not set')
+        return int(res)
+    
+    @threshold.setter
+    def threshold(self, value) -> None:
+        self.client.set('threshold', value)
+
+    @property
     def viewer_interval(self):
         res = self.client.get('viewer_interval')
         if res is None:
