@@ -42,12 +42,23 @@ def test_construction_of_data_dir(cfg):
     cfg.base_data_dir = '/data/base/path/'
 
     with freeze_time('1984-07-22'):
-        assert cfg.data_dir == Path('/data/base/path/UniVie/PIName/ProjectID/1984-07-22')
+        assert cfg.data_dir == Path('/data/base/path/UniVie/PIName/1984/ProjectID/1984-07-22')
+
+@with_redis
+def test_construction_of_work_dir(cfg):
+    cfg.PI_name = 'PIName'
+    cfg.project_id = 'ProjectID'
+    cfg.experiment_class = 'UniVie'
+    cfg.base_data_dir = '/data/base/path/'
+
+    with freeze_time('1984-07-22'):
+        # Test the work_dir with the year included
+        assert cfg.work_dir == Path('/data/base/path/UniVie/PIName/1984/ProjectID')
 
 @with_redis
 def test_fpath(cfg):
     with freeze_time('2024-08-13'):
-        assert cfg.fpath == Path(f'/data/base/path/UniVie/PIName/ProjectID/2024-08-13/037_ProjectID_Lysozyme_2024-08-13_0000_master.h5')
+        assert cfg.fpath == Path(f'/data/base/path/UniVie/PIName/2024/ProjectID/2024-08-13/037_ProjectID_Lysozyme_2024-08-13_0000_master.h5')
 
 @with_redis
 def test_loading_from_yaml(cfg):
@@ -111,7 +122,7 @@ def test_last_dataset(cfg):
     cfg.file_id = 7
 
     with freeze_time('2024-08-13'):
-        last = Path('/data/base/path/UniVie/PIName/ProjectID/2024-08-13/007_ProjectID_Lysozyme_2024-08-13_0000_master.h5')
+        last = Path('/data/base/path/UniVie/PIName/2024/ProjectID/2024-08-13/007_ProjectID_Lysozyme_2024-08-13_0000_master.h5')
         cfg.after_write()
         assert cfg.last_dataset == last
 

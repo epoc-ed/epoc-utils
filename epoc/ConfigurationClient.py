@@ -293,7 +293,7 @@ class ConfigurationClient:
         Computed from the configured experiment
         TODO! Do we need the support for a custom directory
         """
-        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.project_id / self.today
+        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id / self.today
         return path
     
 
@@ -302,7 +302,7 @@ class ConfigurationClient:
         """
         Directory where output of data analysis will be stored
         """
-        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.project_id
+        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id
         return path
 
     @property
@@ -361,6 +361,13 @@ class ConfigurationClient:
         #TODO! should we set this manually instead for experiments crossing over midnight?
         """
         return datetime.now().strftime('%Y-%m-%d')
+    
+    @property
+    def year(self) -> str:
+        """
+        Returns the current year in the format YYYY
+        """
+        return datetime.now().strftime('%Y')
 
     @property
     def timestamp(self) -> str:
