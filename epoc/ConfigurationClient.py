@@ -107,6 +107,32 @@ class ConfigurationClient:
             yaml.safe_dump(res, file, sort_keys=False)
 
     @property
+    def affiliation(self) -> str:
+        res = self.client.get('affiliation')
+        if res is None:
+            raise ValueError('affiliation not set')
+        return res.decode(ConfigurationClient._encoding)
+    
+    @affiliation.setter
+    def affiliation(self, value : str):
+        value = sanitize_label(value)
+        self.client.set('affiliation', value)
+
+    @property
+    def usedAffiliations(self):
+        res = self.client.get('usedAffiliations')
+        if res is None:
+            raise ValueError('usedAffiliations not set')
+        return json.loads(res.decode(ConfigurationClient._encoding))
+    
+    @usedAffiliations.setter
+    def usedAffiliations(self, value):
+        self.client.set('usedAffiliations', json.dumps(value))
+            
+    # def add_affiliation(self, value):
+    #     self.client.rpush('usedAffiliations', value)            
+
+    @property
     def PI_name(self) -> str:
         res = self.client.get('PI_name')
         if res is None:
@@ -117,7 +143,7 @@ class ConfigurationClient:
     def PI_name(self, value : str):
         value = sanitize_label(value)
         self.client.set('PI_name', value)
-
+        
     @property
     def project_id(self) -> str:
         res = self.client.get('project_id')
@@ -293,7 +319,8 @@ class ConfigurationClient:
         Computed from the configured experiment
         TODO! Do we need the support for a custom directory
         """
-        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id / self.today
+#        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id / self.today
+        path = Path(self.base_data_dir) / self.affiliation / self.PI_name / self.year / self.project_id / self.today
         return path
     
 
@@ -302,7 +329,8 @@ class ConfigurationClient:
         """
         Directory where output of data analysis will be stored
         """
-        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id
+#        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id
+        path = Path(self.base_data_dir) / self.affiliation / self.PI_name / self.year / self.project_id
         return path
 
     @property
