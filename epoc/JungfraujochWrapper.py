@@ -90,6 +90,7 @@ class JungfraujochWrapper:
             incident_energy_ke_v = incident_energy_ke_v,
             pixel_value_low_threshold = th,
             file_prefix = fname,
+            space_group_number=1
             )
         
         self.api_instance.start_post(dataset_settings=ds)
