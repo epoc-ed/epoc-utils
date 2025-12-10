@@ -46,7 +46,6 @@ class ConfigurationClient:
     Provides synchronization between PCs and persistent storage of values
     Currently based on Redis but could be extended to other backends
     """
-    # _experiment_classes = ['UniVie', 'External', 'IP']
     _encoding = 'utf-8'
     _default_rotation_speed_idx = 2
     def __init__(self, host = None, port=redis_port(), token=auth_token(), db = redis_db()):
@@ -319,7 +318,6 @@ class ConfigurationClient:
         Computed from the configured experiment
         TODO! Do we need the support for a custom directory
         """
-#        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id / self.today
         path = Path(self.base_data_dir) / self.affiliation / self.PI_name / self.year / self.project_id / self.today
         return path
     
@@ -329,7 +327,6 @@ class ConfigurationClient:
         """
         Directory where output of data analysis will be stored
         """
-#        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id
         path = Path(self.base_data_dir) / self.affiliation / self.PI_name / self.year / self.project_id
         return path
 
@@ -367,20 +364,6 @@ class ConfigurationClient:
     def measurement_tag(self, value : str):
         value = sanitize_label(value)
         self.client.set('measurement_tag', value)
-
-
-    # @property
-    # def experiment_class(self) -> str:
-    #     res = self.client.get('experiment_class')
-    #     if res is None:
-    #         raise ValueError('experiment_class not set')
-    #     return res.decode(ConfigurationClient._encoding)
-    
-    # @experiment_class.setter
-    # def experiment_class(self, value : str):
-    #     if value not in ConfigurationClient._experiment_classes:
-    #         raise ValueError(f'Invalid experiment class. Possible values are: {ConfigurationClient._experiment_classes}. Got: {value}')
-    #     self.client.set('experiment_class', value)
 
     @property
     def today(self) -> str:

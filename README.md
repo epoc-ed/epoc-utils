@@ -40,14 +40,12 @@ c.to_yaml('my-config.yaml')
 #The location and file name is specified with a series of properties
 cfg.PI_name = 'Erik'
 cfg.project_id = 'epoc'
-# cfg.experiment_class = 'UniVie'
 cfg.affiliation = 'UniVie'
 cfg.base_data_dir = '/data/jungfrau/instruments/jem2100plus'
 cfg.measurement_tag = 'Lysozyme'
 
 #Given that the current date is 2024-08-20 at 12:24
 
-#[base_data_dir]/experiment_class]/[project_id]/[date]/
 #[base_data_dir]/[affiliation]/[project_id]/[date]/
 >>> c.data_dir 
 "/data/jungfrau/instruments/jem2100plus/UniVie/epoc/2024-08-20/"
