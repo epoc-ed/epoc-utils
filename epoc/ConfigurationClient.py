@@ -337,10 +337,17 @@ class ConfigurationClient:
         generated from the configured experiment and the current date
         """
         res = self.client.get('measurement_tag')
-        if res is None:
-            raise ValueError('fname not set')
-        s = f'{self.file_id:03d}_{self.project_id}_{res.decode(ConfigurationClient._encoding)}_{self.timestamp}_master.h5'
-        return s
+        tag = res.decode(ConfigurationClient._encoding) if res is not None else ''
+
+        parts = [
+            f"{self.file_id:03d}",
+            self.project_id,
+        ]
+        if tag:  # Only add if non-empty
+            parts.append(tag)
+        parts.append(self.timestamp)
+
+        return "_".join(parts) + "_master.h5"
     
     @property
     def fpath(self) -> Path:
