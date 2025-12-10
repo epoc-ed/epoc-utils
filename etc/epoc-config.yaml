@@ -1,6 +1,7 @@
 #Data collection 
 project_id: epoc
-experiment_class: UniVie
+# experiment_class: UniVie
+affiliation: UniVie
 base_data_dir: /data/jungfrau/instruments/jem2100plus
 measurement_tag: Lysozyme
 PI_name: Erik

@@ -46,7 +46,7 @@ class ConfigurationClient:
     Provides synchronization between PCs and persistent storage of values
     Currently based on Redis but could be extended to other backends
     """
-    _experiment_classes = ['UniVie', 'External', 'IP']
+    # _experiment_classes = ['UniVie', 'External', 'IP']
     _encoding = 'utf-8'
     _default_rotation_speed_idx = 2
     def __init__(self, host = None, port=redis_port(), token=auth_token(), db = redis_db()):
@@ -369,18 +369,18 @@ class ConfigurationClient:
         self.client.set('measurement_tag', value)
 
 
-    @property
-    def experiment_class(self) -> str:
-        res = self.client.get('experiment_class')
-        if res is None:
-            raise ValueError('experiment_class not set')
-        return res.decode(ConfigurationClient._encoding)
+    # @property
+    # def experiment_class(self) -> str:
+    #     res = self.client.get('experiment_class')
+    #     if res is None:
+    #         raise ValueError('experiment_class not set')
+    #     return res.decode(ConfigurationClient._encoding)
     
-    @experiment_class.setter
-    def experiment_class(self, value : str):
-        if value not in ConfigurationClient._experiment_classes:
-            raise ValueError(f'Invalid experiment class. Possible values are: {ConfigurationClient._experiment_classes}. Got: {value}')
-        self.client.set('experiment_class', value)
+    # @experiment_class.setter
+    # def experiment_class(self, value : str):
+    #     if value not in ConfigurationClient._experiment_classes:
+    #         raise ValueError(f'Invalid experiment class. Possible values are: {ConfigurationClient._experiment_classes}. Got: {value}')
+    #     self.client.set('experiment_class', value)
 
     @property
     def today(self) -> str:
@@ -513,7 +513,7 @@ class ConfigurationClient:
         Configuration:
         \tPI_name: {self.PI_name}
         \tproject_id: {self.project_id}
-        \texperiment_class: {self.experiment_class}
+        \taffiliation: {self.affiliation}
         \tdata_dir: {self.data_dir}
         \twork_dir: {self.work_dir}
         \tfname: {self.fname}
