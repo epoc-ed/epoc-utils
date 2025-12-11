@@ -1,6 +1,6 @@
 #Data collection 
 project_id: epoc
-experiment_class: External
+affiliation: External
 base_data_dir: /some/random/path
 measurement_tag: MySample
 PI_name: Erik

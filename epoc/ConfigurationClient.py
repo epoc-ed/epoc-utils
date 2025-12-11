@@ -46,7 +46,6 @@ class ConfigurationClient:
     Provides synchronization between PCs and persistent storage of values
     Currently based on Redis but could be extended to other backends
     """
-    _experiment_classes = ['UniVie', 'External', 'IP']
     _encoding = 'utf-8'
     _default_rotation_speed_idx = 2
     def __init__(self, host = None, port=redis_port(), token=auth_token(), db = redis_db()):
@@ -107,6 +106,32 @@ class ConfigurationClient:
             yaml.safe_dump(res, file, sort_keys=False)
 
     @property
+    def affiliation(self) -> str:
+        res = self.client.get('affiliation')
+        if res is None:
+            raise ValueError('affiliation not set')
+        return res.decode(ConfigurationClient._encoding)
+    
+    @affiliation.setter
+    def affiliation(self, value : str):
+        value = sanitize_label(value)
+        self.client.set('affiliation', value)
+
+    @property
+    def usedAffiliations(self):
+        res = self.client.get('usedAffiliations')
+        if res is None:
+            raise ValueError('usedAffiliations not set')
+        return json.loads(res.decode(ConfigurationClient._encoding))
+    
+    @usedAffiliations.setter
+    def usedAffiliations(self, value):
+        self.client.set('usedAffiliations', json.dumps(value))
+            
+    # def add_affiliation(self, value):
+    #     self.client.rpush('usedAffiliations', value)            
+
+    @property
     def PI_name(self) -> str:
         res = self.client.get('PI_name')
         if res is None:
@@ -117,7 +142,7 @@ class ConfigurationClient:
     def PI_name(self, value : str):
         value = sanitize_label(value)
         self.client.set('PI_name', value)
-
+        
     @property
     def project_id(self) -> str:
         res = self.client.get('project_id')
@@ -293,7 +318,7 @@ class ConfigurationClient:
         Computed from the configured experiment
         TODO! Do we need the support for a custom directory
         """
-        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id / self.today
+        path = Path(self.base_data_dir) / self.affiliation / self.PI_name / self.year / self.project_id / self.today
         return path
     
 
@@ -302,7 +327,7 @@ class ConfigurationClient:
         """
         Directory where output of data analysis will be stored
         """
-        path = Path(self.base_data_dir) / self.experiment_class / self.PI_name / self.year / self.project_id
+        path = Path(self.base_data_dir) / self.affiliation / self.PI_name / self.year / self.project_id
         return path
 
     @property
@@ -312,10 +337,17 @@ class ConfigurationClient:
         generated from the configured experiment and the current date
         """
         res = self.client.get('measurement_tag')
-        if res is None:
-            raise ValueError('fname not set')
-        s = f'{self.file_id:03d}_{self.project_id}_{res.decode(ConfigurationClient._encoding)}_{self.timestamp}_master.h5'
-        return s
+        tag = res.decode(ConfigurationClient._encoding) if res is not None else ''
+
+        parts = [
+            f"{self.file_id:03d}",
+            self.project_id,
+        ]
+        if tag:  # Only add if non-empty
+            parts.append(tag)
+        parts.append(self.timestamp)
+
+        return "_".join(parts) + "_master.h5"
     
     @property
     def fpath(self) -> Path:
@@ -339,20 +371,6 @@ class ConfigurationClient:
     def measurement_tag(self, value : str):
         value = sanitize_label(value)
         self.client.set('measurement_tag', value)
-
-
-    @property
-    def experiment_class(self) -> str:
-        res = self.client.get('experiment_class')
-        if res is None:
-            raise ValueError('experiment_class not set')
-        return res.decode(ConfigurationClient._encoding)
-    
-    @experiment_class.setter
-    def experiment_class(self, value : str):
-        if value not in ConfigurationClient._experiment_classes:
-            raise ValueError(f'Invalid experiment class. Possible values are: {ConfigurationClient._experiment_classes}. Got: {value}')
-        self.client.set('experiment_class', value)
 
     @property
     def today(self) -> str:
@@ -485,7 +503,7 @@ class ConfigurationClient:
         Configuration:
         \tPI_name: {self.PI_name}
         \tproject_id: {self.project_id}
-        \texperiment_class: {self.experiment_class}
+        \taffiliation: {self.affiliation}
         \tdata_dir: {self.data_dir}
         \twork_dir: {self.work_dir}
         \tfname: {self.fname}

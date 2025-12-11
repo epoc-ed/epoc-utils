@@ -38,7 +38,7 @@ def test_construction_of_fname(cfg):
 def test_construction_of_data_dir(cfg):
     cfg.PI_name = 'PIName'
     cfg.project_id = 'ProjectID'
-    cfg.experiment_class = 'UniVie'
+    cfg.affiliation = 'UniVie'
     cfg.base_data_dir = '/data/base/path/'
 
     with freeze_time('1984-07-22'):
@@ -48,7 +48,7 @@ def test_construction_of_data_dir(cfg):
 def test_construction_of_work_dir(cfg):
     cfg.PI_name = 'PIName'
     cfg.project_id = 'ProjectID'
-    cfg.experiment_class = 'UniVie'
+    cfg.affiliation = 'UniVie'
     cfg.base_data_dir = '/data/base/path/'
 
     with freeze_time('1984-07-22'):
@@ -65,7 +65,7 @@ def test_loading_from_yaml(cfg):
     cfg.from_yaml('tests/test_epoc_config.yaml', flush_db=True)
     assert cfg.PI_name == 'Erik'
     assert cfg.project_id == 'epoc'
-    assert cfg.experiment_class == 'External'
+    assert cfg.affiliation == 'External'
     assert cfg.base_data_dir == Path('/some/random/path')
     assert cfg.measurement_tag == 'MySample'
     assert cfg.file_id == 3
@@ -81,7 +81,7 @@ def test_update_from_yaml(cfg):
     #The rest should have stayed the same
     assert cfg.PI_name == 'Erik'
     assert cfg.project_id == 'epoc'
-    assert cfg.experiment_class == 'External'
+    assert cfg.affiliation == 'External'
     assert cfg.base_data_dir == Path('/some/random/path')
     assert cfg.measurement_tag == 'MySample'
 
@@ -116,7 +116,7 @@ def test_not_set_gives_default(cfg):
 def test_last_dataset(cfg):
     cfg.PI_name = 'PIName'
     cfg.project_id = 'ProjectID'
-    cfg.experiment_class = 'UniVie'
+    cfg.affiliation = 'UniVie'
     cfg.base_data_dir = '/data/base/path/'
     cfg.measurement_tag = 'Lysozyme'
     cfg.file_id = 7
@@ -143,25 +143,6 @@ def test_set_rows_and_cols(cfg):
     cfg.ncols = 200
     assert cfg.nrows == 100
     assert cfg.ncols == 200
-
-
-@with_redis
-def test_experiment_class(cfg):
-    cfg.experiment_class = 'UniVie'
-    assert cfg.experiment_class == 'UniVie'
-
-    cfg.experiment_class = 'External'
-    assert cfg.experiment_class == 'External'
-
-    cfg.experiment_class = 'IP'
-    assert cfg.experiment_class == 'IP'
-
-@with_redis
-def test_experiment_class_throws_on_not_allowed_value(cfg):
-    with pytest.raises(ValueError):
-        cfg.experiment_class = 'SomeRandomName'
-    
-
 
 @with_redis
 def test_set_receiver_endpoint(cfg):
