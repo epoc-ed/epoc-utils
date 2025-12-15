@@ -19,6 +19,8 @@ class JungfraujochWrapper:
         self.api_instance = jfjoch_client.DefaultApi(self.api_client)
         self._image_time_us = 50000 #100x500us
         self._lots_of_images = 72000 #1h at 20Hz
+        self.incident_energy_ke_v = 200
+        self.space_group_number = 1
 
     def cancel(self) -> None:
         """
@@ -81,16 +83,18 @@ class JungfraujochWrapper:
         
         
         """
+        self.incident_energy_ke_v = incident_energy_ke_v # update instance for spotfinding
+
         ds = jfjoch_client.DatasetSettings(
             image_time_us = self._image_time_us,
             images_per_trigger = n_images,
             beam_x_pxl = beam_x_pxl,
             beam_y_pxl = beam_y_pxl,
             detector_distance_mm = detector_distance_mm,
-            incident_energy_ke_v = incident_energy_ke_v,
+            incident_energy_ke_v = self.incident_energy_ke_v,
             pixel_value_low_threshold = th,
             file_prefix = fname,
-            space_group_number=1
+            space_group_number = self.space_group_number,
             )
         
         self.api_instance.start_post(dataset_settings=ds)
@@ -98,7 +102,31 @@ class JungfraujochWrapper:
             time.sleep(0.3)
             self.wait_until_idle()
 
-    
+    def get_spotfind_status(self) -> bool:
+        return self.api_instance.config_spot_finding_get().enable    
+
+    def set_spotfind(self, enable : bool, 
+                signal_to_noise_threshold = 3,
+                max_pix_per_spot = 100,
+                min_pix_per_spot = 6,
+                high_resolution_limit = 0.5, # jfj limits to >=0.5?
+                low_resolution_limit = 3) -> None:
+
+        sf = jfjoch_client.SpotFindingSettings(
+            enable = enable,
+            indexing = False,
+            signal_to_noise_threshold = signal_to_noise_threshold,
+            photon_count_threshold = self.incident_energy_ke_v * 3,
+            max_pix_per_spot = max_pix_per_spot,
+            min_pix_per_spot = min_pix_per_spot,
+            high_resolution_limit = high_resolution_limit,
+            low_resolution_limit = low_resolution_limit,
+            high_resolution_limit_for_spot_count_low_res = 3,  # jfj later than rc40
+            quick_integration = False,  # jfj later than rc40, 
+            ice_ring_width_q_recipA = 0.02,  # jfj much later than rc40, 
+            )
+
+        self.api_instance.config_spot_finding_put(spot_finding_settings=sf)
 
     def collect_pedestal(self, wait = False):
         """Start pedestal collection
@@ -132,7 +160,7 @@ class JungfraujochWrapper:
                 if progress:
                     print(f'Progress: {100:.0f}%')
                 break
-            if progress:
+            if progress and s.progress:
                 print(f'Progress: {100*s.progress:.0f}%', end = '\r')
             time.sleep(0.1)
 
